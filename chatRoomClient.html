@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>socket.ioの動作確認</title>
+  </head>
+  <body>
+
+    <div>
+      <input type="text" id="room" style="width:50px;"/>
+      <button onclick="joinRoom();">join</button>
+      <button onclick="leaveRoom();">leave</button>
+    </div>
+    <div>
+      <input type="text" id="msg" style="width:200px;"/>
+      <button onclick="addMessage();">comment</button>
+    </div>
+    <ul>
+      <li>とりあえずsocket.ioの動作確認用に作成（あとはサーバ側だけ触って色々確認する）</li>
+      <li>1人は同時に1室までにしか入れない</li>
+      <li>leave後にjoinするためには再読み込み必須(joinをonceで制限しており、reconnect未設定のため)</li>
+      <li>同じ部屋のメンバーにのみ, join, leave, メッセージを出力</li>
+      <li>メッセージは全てconsoleに出力</li>
+    </ul>
+    <div id="view"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+  var socket = io.connect('192.168.1.222:8080');
+  socket.on('msgForConsole', function(data) {
+    console.log(data);
+  });
+
+  function joinRoom() {
+    var roomNum = document.getElementById('room').value;
+    socket.emit('joinRoom', roomNum);
+  }
+  function leaveRoom() {
+    socket.emit('leaveRoom');
+  }
+  function addMessage() {
+    var message = document.getElementById('msg').value;
+    socket.json.emit('addMessage', message);
+  }
+</script>
+
+  </body>
+</html>
